@@ -9,11 +9,11 @@ reMarked = function(opts) {
 
 	var links = [];
 	var cfg = {
-		link_list:	false,			// render links as references, create link list as appendix
+		link_list:	true,			// render links as references, create link list as appendix
 	//  link_near:					// cite links immediately after blocks
 		h1_setext:	true,			// underline h1 headers
 		h2_setext:	true,			// underline h2 headers
-		h_atx_suf:	false,			// header suffix (###)
+		h_atx_suf:	true,			// header suffix (###)
 	//	h_compact:	true,			// compact headers (except h1)
 		gfm_code:	false,			// render code blocks as via ``` delims
 		li_bullet:	"*-+"[0],		// list item bullet style
@@ -23,7 +23,7 @@ reMarked = function(opts) {
 		bold_char:	"*_"[0],		// char used for strong
 		emph_char:	"*_"[1],		// char used for em
 		gfm_del:	true,			// ~~strikeout~~ for <del>strikeout</del>
-		gfm_tbls:	true,			// markdown-extra tables
+		gfm_tbls:	false,			// markdown-extra tables
 		tbl_edges:	false,			// show side edges on tables
 		hash_lnks:	false,			// anchors w/hash hrefs as links
 		br_only:	false,			// avoid using "  " as line break indicator
@@ -146,8 +146,12 @@ reMarked = function(opts) {
 
 	this.render = function(ctr) {
 		// compile regexes
-		for (var i in cfg.unsup_tags)
-			cfg.unsup_tags[i] = new RegExp("^(?:" + (i == "inline" ? "a|em|strong|img|code|del|" : "") + cfg.unsup_tags[i].replace(/\s/g, "|") + ")$");
+		links=[];
+		for (var i in cfg.unsup_tags) {
+			if (!(cfg.unsup_tags[i] instanceof RegExp)) {
+				cfg.unsup_tags[i] = new RegExp("^(?:" + (i == "inline" ? "a|em|strong|img|code|del|" : "") + cfg.unsup_tags[i].replace(/\s/g, "|") + ")$");
+			}
+		}
 
 		if (typeof ctr == "string") {
 			var htmlstr = ctr;
@@ -170,7 +174,7 @@ reMarked = function(opts) {
 
 			for (var k in links) {
 				var title = links[k].e.title ? rep(" ", (maxlen + 2) - links[k].e.href.length) + '"' + links[k].e.title + '"' : "";
-				re += "  [" + (+k+1) + "]: " + links[k].e.href + title + "\n";
+				re += "  [" + (+k+1) + "]: " + (links[k].e.nodeName.toLowerCase() === "a" ? links[k].e.href:links[k].e.src) + title + "\n";
 			}
 		}
 
@@ -418,6 +422,8 @@ reMarked = function(opts) {
 					href = this.e.getAttribute("href"),
 					title = this.e.title ? ' "' + this.e.title + '"' : "";
 
+					console.log(nodeName);
+
 				if (!href || href == kids || href[0] == "#" && !cfg.hash_lnks)
 					return kids;
 
@@ -436,7 +442,7 @@ reMarked = function(opts) {
 					src = this.e.getAttribute("src");
 
 				if (cfg.link_list)
-					return "[" + kids + "] [" + (this.lnkid + 1) + "]";
+					return "![" + kids + "] [" + (this.lnkid + 1) + "]";
 
 				var title = this.e.title ? ' "'+ this.e.title + '"' : "";
 
