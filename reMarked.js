@@ -9,11 +9,11 @@ reMarked = function(opts) {
 
 	var links = [];
 	var cfg = {
-		link_list:	true,			// render links as references, create link list as appendix
+		link_list:	false,			// render links as references, create link list as appendix
 	//  link_near:					// cite links immediately after blocks
 		h1_setext:	true,			// underline h1 headers
 		h2_setext:	true,			// underline h2 headers
-		h_atx_suf:	true,			// header suffix (###)
+		h_atx_suf:	false,			// header suffix (###)
 	//	h_compact:	true,			// compact headers (except h1)
 		gfm_code:	false,			// render code blocks as via ``` delims
 		li_bullet:	"*-+"[0],		// list item bullet style
@@ -23,7 +23,7 @@ reMarked = function(opts) {
 		bold_char:	"*_"[0],		// char used for strong
 		emph_char:	"*_"[1],		// char used for em
 		gfm_del:	true,			// ~~strikeout~~ for <del>strikeout</del>
-		gfm_tbls:	false,			// markdown-extra tables
+		gfm_tbls:	true,			// markdown-extra tables
 		tbl_edges:	false,			// show side edges on tables
 		hash_lnks:	false,			// anchors w/hash hrefs as links
 		br_only:	false,			// avoid using "  " as line break indicator
@@ -421,8 +421,6 @@ reMarked = function(opts) {
 				var kids = this.rendK(),
 					href = this.e.getAttribute("href"),
 					title = this.e.title ? ' "' + this.e.title + '"' : "";
-
-					console.log(nodeName);
 
 				if (!href || href == kids || href[0] == "#" && !cfg.hash_lnks)
 					return kids;
