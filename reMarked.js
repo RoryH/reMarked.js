@@ -146,8 +146,12 @@ reMarked = function(opts) {
 
 	this.render = function(ctr) {
 		// compile regexes
-		for (var i in cfg.unsup_tags)
-			cfg.unsup_tags[i] = new RegExp("^(?:" + (i == "inline" ? "a|em|strong|img|code|del|" : "") + cfg.unsup_tags[i].replace(/\s/g, "|") + ")$");
+		links=[];
+		for (var i in cfg.unsup_tags) {
+			if (!(cfg.unsup_tags[i] instanceof RegExp)) {
+				cfg.unsup_tags[i] = new RegExp("^(?:" + (i == "inline" ? "a|em|strong|img|code|del|" : "") + cfg.unsup_tags[i].replace(/\s/g, "|") + ")$");
+			}
+		}
 
 		if (typeof ctr == "string") {
 			var htmlstr = ctr;
@@ -170,7 +174,7 @@ reMarked = function(opts) {
 
 			for (var k in links) {
 				var title = links[k].e.title ? rep(" ", (maxlen + 2) - links[k].e.href.length) + '"' + links[k].e.title + '"' : "";
-				re += "  [" + (+k+1) + "]: " + links[k].e.href + title + "\n";
+				re += "  [" + (+k+1) + "]: " + (links[k].e.nodeName.toLowerCase() === "a" ? links[k].e.href:links[k].e.src) + title + "\n";
 			}
 		}
 
@@ -436,7 +440,7 @@ reMarked = function(opts) {
 					src = this.e.getAttribute("src");
 
 				if (cfg.link_list)
-					return "[" + kids + "] [" + (this.lnkid + 1) + "]";
+					return "![" + kids + "] [" + (this.lnkid + 1) + "]";
 
 				var title = this.e.title ? ' "'+ this.e.title + '"' : "";
 
